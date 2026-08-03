@@ -4,11 +4,12 @@ on:
     tags:
       - 'v[0-9]+*'
   schedule:
-    # twice a month
-    - cron: '25 10 10,25 * *'
+    # monthly on day 15
+    - cron: '15 15 15 * *'
   workflow_dispatch:
 
 permissions:
+  artifact-metadata: write
   attestations: write
   id-token: write
   packages: write
