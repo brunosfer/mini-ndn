@@ -33,6 +33,7 @@ from mn_wifi.topo import Topo as Topo_WiFi
 from mn_wifi.net import Mininet_wifi
 from mn_wifi.link import WirelessLink
 from mn_wifi.link import wmediumd, adhoc
+from mn_wifi.propagationModels import PropagationModel as ppm
 
 from minindn.minindn import Minindn
 from minindn.helpers.nfdc import Nfdc
@@ -80,6 +81,14 @@ class MinindnWifi(Minindn):
         else:
             self.topo = topo
 
+        # The propagation model must be set before the network is built,
+        # otherwise the wmediumd configuration keeps the default model.
+        if link == wmediumd and not noTopo:
+            if "wmediumd_mode" not in mininetParams:
+                info("No wmediumd mode specified in constructor, range will not be restricted (interference mode is recommended)\n")
+            else:
+                self.processWmediumd(self.topoFile)
+
         if not noTopo:
             self.net = Mininet_wifi(topo=self.topo, ifb=self.args.ifb, link=link, **mininetParams)
         else:
@@ -92,12 +101,6 @@ class MinindnWifi(Minindn):
         # Prevents crashes running mixed topos
         nodes = self.net.stations + self.net.hosts + self.net.cars
         self.initParams(nodes)
-
-        if link == wmediumd and not noTopo:
-            if "wmediumd_mode" not in mininetParams:
-                info("No wmediumd mode specified in constructor, range will not be restricted (interference mode is recommended)\n")
-            else:
-                self.processWmediumd(self.topoFile)
 
         try:
             process = Popen(['ndnsec-get-default', '-k'], stdout=PIPE, stderr=PIPE)
@@ -293,7 +296,9 @@ class MinindnWifi(Minindn):
                 value = param.split('=')[1]
                 params[key] = value
             params = self.convert_params(params)
-            self.net.setPropagationModel(model=params["propagation_model"], exp=params["propagation_exponent"])
+            params["model"] = params.pop("propagation_model")
+            params["exp"] = params.pop("propagation_exponent")
+            ppm.set_attr(ppm.noise_th, ppm.cca_threshold, **params)
 
         except configparser.NoSectionError:
             debug("Wmediumd section is optional\n")
