@@ -338,9 +338,9 @@ class Nlsr(Application):
             if len(infoeditChange) > 2:
                 if infoeditChange[2] == "delete":
                     debug(f'{self.infocmd} -d {quote(infoeditChange[0])}\n')
-                    debug(self.node.cmd(f'{self.infocmd} -d {quote(infoeditChange[0])}\n'))
+                    debug(self.node.cmd(f'{self.infocmd} -d {quote(infoeditChange[0])}'))
                     continue
                 else:
                     command = INFOEDIT_COMMANDS[infoeditChange[2]]
             debug(f'{self.infocmd} {command} {quote(infoeditChange[0])} -v {quote(infoeditChange[1])}\n')
-            debug(self.node.cmd(f'{self.infocmd} {command} {quote(infoeditChange[0])} -v {quote(infoeditChange[1])}\n'))
+            debug(self.node.cmd(f'{self.infocmd} {command} {quote(infoeditChange[0])} -v {quote(infoeditChange[1])}'))

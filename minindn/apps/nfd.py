@@ -103,7 +103,7 @@ class Nfd(Application):
         os.remove("{}/temp_nfd_conf.json".format(self.homeDir))
 
         self.infocmd = 'infoedit -f nfd.conf'
-        debug(self.node.cmd(f'{self.infocmd} -p {quote("face_system.tcp.local.whitelist.subnet")} -v {quote("127.0.0.0/8")}\n'))
+        debug(self.node.cmd(f'{self.infocmd} -p {quote("face_system.tcp.local.whitelist.subnet")} -v {quote("127.0.0.0/8")}'))
         # Apply custom infoedit changes
         # EXPECTED FORMAT: [<section>, <key>] OR [<section>, <key>, <operation>]
         # Default behavior will replace all values for section with key
@@ -115,12 +115,12 @@ class Nfd(Application):
                 if len(infoeditChange) > 2:
                     if infoeditChange[2] == "delete":
                         debug(f'{self.infocmd} -d {quote(infoeditChange[0])}\n')
-                        debug(self.node.cmd(f'{self.infocmd} -d {quote(infoeditChange[0])}\n'))
+                        debug(self.node.cmd(f'{self.infocmd} -d {quote(infoeditChange[0])}'))
                         continue
                     else:
                         command = INFOEDIT_COMMANDS[infoeditChange[2]]
                 debug(f'{self.infocmd} {command} {quote(infoeditChange[0])} -v {quote(infoeditChange[1])}\n')
-                debug(self.node.cmd(f'{self.infocmd} {command} {quote(infoeditChange[0])} -v {quote(infoeditChange[1])}\n'))
+                debug(self.node.cmd(f'{self.infocmd} {command} {quote(infoeditChange[0])} -v {quote(infoeditChange[1])}'))
 
         if not Minindn.ndnSecurityDisabled:
             # Generate key and install cert for /localhost/operator to be used by NFD
